@@ -74,9 +74,12 @@ const Index = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="heading-display mb-6"
         >
-          Understanding Depression
+          MindJourneys
           <br />
-          <span className="text-primary">Through Real Stories</span>
+          <span className="block text-2xl md:text-3xl">
+            An Interactive Narrative Visualization of{' '}
+            <span className="text-primary">Depression Case Reports</span>
+          </span>
         </motion.h1>
 
         <motion.p
