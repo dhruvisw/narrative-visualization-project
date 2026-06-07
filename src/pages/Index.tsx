@@ -133,17 +133,6 @@ const Index = () => {
         </motion.div>
       </motion.div>
 
-      <motion.footer
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 1 }}
-        className="absolute bottom-8 text-center"
-      >
-        <p className="text-sm text-muted-foreground">
-          Project by <span className="font-medium">Dhruvi Swadia</span> and{" "}
-          <span className="font-medium">Nivedita Kowlagi</span>
-        </p>
-      </motion.footer>
     </div>
   );
 };

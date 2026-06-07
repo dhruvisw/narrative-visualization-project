@@ -364,7 +364,7 @@ const Bibliography = () => {
           className="mt-16 pt-8 border-t border-border text-center"
         >
           <p className="text-muted-foreground mb-2">
-            Project by <strong>Dhruvi Swadia</strong> and <strong>Nivedita Kowlagi</strong>
+            Presented by the MindJourneys team
           </p>
           <p className="text-sm text-muted-foreground">
             A narrative visualization exploring depression journeys over time.
