@@ -11,6 +11,7 @@ const flowOrder = [
   '/video-transition',
   '/choice',
   '/compare',
+  '/learned',
 ];
 
 const Navigation = () => {

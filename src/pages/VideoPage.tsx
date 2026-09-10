@@ -12,7 +12,7 @@ import {
 import { markVideoCompleted, startPageTime, sendPageTime } from '@/lib/surveyData';
 
 
-const VIDEO_END_THRESHOLD = 20;
+const CONTINUE_DELAY_MS = 20_000;
 
 declare global {
   interface Window {
@@ -25,8 +25,6 @@ const VideoPage = () => {
   const navigate = useNavigate();
   const [showNext, setShowNext] = useState(false);
   const playerRef = useRef<any>(null);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const maxReachedRef = useRef(0);
   const startedRef = useRef(false);
   const completedRef = useRef(false);
   const userInteractedRef = useRef(false);
@@ -54,7 +52,6 @@ const VideoPage = () => {
           mute: 1,
           rel: 0,
           modestbranding: 1,
-          disablekb: 1,
           controls: 1,
         },
         events: {
@@ -74,30 +71,7 @@ const VideoPage = () => {
               completedRef.current = true;
               trackVideoComplete();
               markVideoCompleted();
-              setShowNext(true);
             }
-          },
-          onReady: () => {
-            intervalRef.current = setInterval(() => {
-              const player = playerRef.current;
-              if (!player?.getCurrentTime || !player?.getDuration) return;
-
-              const currentTime = player.getCurrentTime();
-              const duration = player.getDuration();
-
-              // Anti-seek: revert if jumped ahead
-              if (currentTime > maxReachedRef.current + 2) {
-                player.seekTo(maxReachedRef.current, true);
-              } else {
-                maxReachedRef.current = Math.max(maxReachedRef.current, currentTime);
-              }
-
-              // Reveal Next button in last 20s (UI only — completion event
-              // still fires from the ENDED state above)
-              if (duration > 0 && duration - currentTime <= VIDEO_END_THRESHOLD) {
-                setShowNext(true);
-              }
-            }, 1000);
           },
         },
       });
@@ -113,7 +87,6 @@ const VideoPage = () => {
     }
 
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
       if (playerRef.current?.destroy) playerRef.current.destroy();
     };
   }, []);
@@ -121,8 +94,10 @@ const VideoPage = () => {
   useEffect(() => {
     startPageTimer('video_page');
     startPageTime('video');
+    const continueTimer = setTimeout(() => setShowNext(true), CONTINUE_DELAY_MS);
     const cleanup = initPlayer();
     return () => {
+      clearTimeout(continueTimer);
       cleanup?.();
       endPageTimer('video_page');
     };
@@ -131,7 +106,7 @@ const VideoPage = () => {
   const handleNext = () => {
     endPageTimer('video_page');
     sendPageTime('video');
-    navigate('/video-transition');
+    navigate('/compare');
   };
 
   return (
@@ -162,7 +137,7 @@ const VideoPage = () => {
             </a>
           </p>
 
-          {/* Gated Next Button */}
+          {/* Continue Button */}
           <AnimatePresence>
             {showNext && (
               <motion.div
@@ -185,7 +160,7 @@ const VideoPage = () => {
 
           {!showNext && (
             <p className="mt-8 text-center text-sm text-muted-foreground">
-              Please watch the video to continue.
+              Continue will be available shortly.
             </p>
           )}
         </motion.div>
