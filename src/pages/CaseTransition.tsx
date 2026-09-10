@@ -24,7 +24,7 @@ const CaseTransition = () => {
     if (nextCase <= 4) {
       navigate(`/case/${nextCase}`);
     } else {
-      navigate('/choice');
+      navigate('/video');
     }
   };
 

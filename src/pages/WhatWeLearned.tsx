@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import PageWrapper from '@/components/PageWrapper';
-import { Heart, Home } from 'lucide-react';
+import { ArrowRight, Heart } from 'lucide-react';
 import { startPageTime, sendPageTime } from '@/lib/surveyData';
 
 import homepageBackground from '@/assets/homepage-background.jpg';
@@ -102,12 +102,13 @@ const WhatWeLearned = () => {
           <button
             onClick={() => {
               sendPageTime('learned');
-              navigate('/');
+              navigate('/bibliography');
+              window.scrollTo({ top: 0, behavior: 'auto' });
             }}
             className="nav-button-primary group text-lg px-8 py-3 inline-flex items-center gap-2"
           >
-            <Home className="w-5 h-5" />
-            Back to Home
+            Continue to References
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </button>
         </motion.div>
       </div>

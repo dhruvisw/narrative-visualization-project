@@ -6,8 +6,7 @@ import { caseStudies } from '@/data/caseStudies';
 import { ArrowRight } from 'lucide-react';
 // Minimum engagement time for non-video cases (seconds)
 const MIN_READING_TIME = 45;
-// Seconds before end to show Next button for video
-const VIDEO_END_THRESHOLD = 10;
+const VIDEO_CONTINUE_DELAY_MS = 15_000;
 
 declare global {
   interface Window {
@@ -25,13 +24,13 @@ const CaseDetail = () => {
 
   const [showNext, setShowNext] = useState(false);
   const playerRef = useRef<any>(null);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const maxReachedRef = useRef(0);
 
-  // For non-video cases: timer-based gating
+  // Time spent on the page controls Continue availability.
   useEffect(() => {
-    if (hasVideo) return;
-    const timer = setTimeout(() => setShowNext(true), MIN_READING_TIME * 1000);
+    const timer = setTimeout(
+      () => setShowNext(true),
+      hasVideo ? VIDEO_CONTINUE_DELAY_MS : MIN_READING_TIME * 1000,
+    );
     return () => clearTimeout(timer);
   }, [hasVideo]);
 
@@ -47,32 +46,7 @@ const CaseDetail = () => {
           mute: 1,
           rel: 0,
           modestbranding: 1,
-          disablekb: 1, // disable keyboard seeking
           controls: 1,
-        },
-        events: {
-          onReady: (event: any) => {
-            // Start polling for progress
-            intervalRef.current = setInterval(() => {
-              const player = playerRef.current;
-              if (!player?.getCurrentTime || !player?.getDuration) return;
-
-              const currentTime = player.getCurrentTime();
-              const duration = player.getDuration();
-
-              // Anti-seek: if user jumped ahead of maxReached, revert
-              if (currentTime > maxReachedRef.current + 2) {
-                player.seekTo(maxReachedRef.current, true);
-              } else {
-                maxReachedRef.current = Math.max(maxReachedRef.current, currentTime);
-              }
-
-              // Show Next when within last 10 seconds
-              if (duration > 0 && duration - currentTime <= VIDEO_END_THRESHOLD) {
-                setShowNext(true);
-              }
-            }, 1000);
-          },
         },
       });
     };
@@ -88,7 +62,6 @@ const CaseDetail = () => {
     }
 
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
       if (playerRef.current?.destroy) playerRef.current.destroy();
     };
   }, [hasVideo]);
@@ -236,7 +209,7 @@ const CaseDetail = () => {
         {!showNext && (
           <p className="text-center text-sm text-muted-foreground pb-12">
             {hasVideo
-              ? 'Please watch the video to continue.'
+              ? 'Continue will be available shortly.'
               : 'Take your time reading the story…'}
           </p>
         )}

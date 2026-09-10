@@ -12,6 +12,7 @@ const flowOrder = [
   '/choice',
   '/compare',
   '/learned',
+  '/bibliography',
 ];
 
 const Navigation = () => {
@@ -85,7 +86,7 @@ const Navigation = () => {
             )
           ) : path === '/transition' ? (
             <button
-              onClick={() => handleNavigate('/case/4')}
+              onClick={() => handleNavigate('/about-depression')}
               className="nav-button-secondary"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -100,7 +101,7 @@ const Navigation = () => {
             <>
               {isCase && (
                 <button
-                  onClick={() => handleNavigate(caseNum! < 4 ? `/case/${caseNum! + 1}` : '/transition')}
+                  onClick={() => handleNavigate(caseNum! < 4 ? `/case/${caseNum! + 1}` : '/video')}
                   className="nav-button-primary"
                 >
                   <span>Next</span>

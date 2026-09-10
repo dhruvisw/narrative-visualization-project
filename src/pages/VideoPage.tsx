@@ -12,7 +12,7 @@ import {
 import { markVideoCompleted, startPageTime, sendPageTime } from '@/lib/surveyData';
 
 
-const CONTINUE_DELAY_MS = 20_000;
+const CONTINUE_DELAY_MS = 15_000;
 
 declare global {
   interface Window {
@@ -106,7 +106,7 @@ const VideoPage = () => {
   const handleNext = () => {
     endPageTimer('video_page');
     sendPageTime('video');
-    navigate('/compare');
+    navigate('/video-transition');
   };
 
   return (
