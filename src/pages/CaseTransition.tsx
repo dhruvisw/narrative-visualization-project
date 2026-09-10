@@ -1,0 +1,90 @@
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import PageWrapper from '@/components/PageWrapper';
+import { transitionMessages } from '@/data/assessmentQuestions';
+import { ArrowRight } from 'lucide-react';
+
+const CaseTransition = () => {
+  const { fromCase } = useParams();
+  const navigate = useNavigate();
+  const caseIndex = parseInt(fromCase || '1') - 1;
+  const message = transitionMessages[caseIndex] || transitionMessages[0];
+
+  const [showButton, setShowButton] = useState(false);
+
+  // Show button after 4 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => setShowButton(true), 4000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleContinue = () => {
+    const nextCase = caseIndex + 2;
+    if (nextCase <= 4) {
+      navigate(`/case/${nextCase}`);
+    } else {
+      navigate('/choice');
+    }
+  };
+
+  return (
+    <PageWrapper showNav={false}>
+      <div className="min-h-screen flex items-center justify-center px-6 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, ease: 'easeOut' }}
+          className="text-center max-w-2xl"
+        >
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="text-3xl md:text-4xl lg:text-5xl font-serif leading-relaxed text-foreground/90"
+          >
+            {message.heading}
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+            className="text-lg md:text-xl text-muted-foreground leading-relaxed mt-6 max-w-xl mx-auto"
+          >
+            {message.subtext}
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, scaleX: 0 }}
+            animate={{ opacity: 1, scaleX: 1 }}
+            transition={{ duration: 0.8, delay: 1.2 }}
+            className="w-24 h-1 bg-primary/30 mx-auto mt-10 rounded-full"
+          />
+
+          <AnimatePresence>
+            {showButton && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.6 }}
+                className="mt-10"
+              >
+                <button
+                  onClick={handleContinue}
+                  className="nav-button-primary group text-lg px-8 py-3"
+                >
+                  Continue
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      </div>
+    </PageWrapper>
+  );
+};
+
+export default CaseTransition;
